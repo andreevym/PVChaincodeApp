@@ -26,15 +26,17 @@ import (
 	"errors"
 	"strconv"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"fmt"
+	"github.com/op/go-logging"
 )
+
+var chaincodeLogger = logging.MustGetLogger("chaincode")
 
 // SimpleChaincode example simple Chaincode implementation
 type SimpleChaincode struct {
 }
 
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	fmt.Println("##### INIT RUN #####")
+	chaincodeLogger.Info("##### INIT RUN #####")
 	var A, B string    // Entities
 	var Aval, Bval int // Asset holdings
 	var err error
@@ -55,7 +57,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, errors.New("Expecting integer value for asset holding")
 	}
 
-	fmt.Printf("Current values: A = %d, B = %d\n", Aval, Bval)
+	chaincodeLogger.Info("Current values: A = %d, B = %d\n", Aval, Bval)
 
 	// Write the state to the ledger
 	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
@@ -73,7 +75,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 // Transaction makes payment of X units from A to B
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	fmt.Printf("##### INVOKE RUN #####")
+	chaincodeLogger.Info("##### INVOKE RUN #####")
 	if function == "delete" {
 		// Deletes an entity from its state
 		return t.delete(stub, args)
@@ -118,7 +120,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	}
 	Aval = Aval - X
 	Bval = Bval + X
-	fmt.Printf("Current values: A = %d, B = %d\n", Aval, Bval)
+	chaincodeLogger.Info("Current values: A = %d, B = %d\n", Aval, Bval)
 
 	// Write the state back to the ledger
 	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
@@ -153,7 +155,7 @@ func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 
 // Query callback representing the query of a chaincode
 func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	fmt.Printf("##### QUERY RUN #####")
+	chaincodeLogger.Info("##### QUERY RUN #####")
 	if function != "query" {
 		return nil, errors.New("Invalid query function name. Expecting \"query\"")
 	}
@@ -179,13 +181,13 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	}
 
 	jsonResp := "{\"Name\":\"" + A + "\",\"Amount\":\"" + string(Avalbytes) + "\"}"
-	fmt.Printf("Query Response:%s\n", jsonResp)
+	chaincodeLogger.Info("Query Response:%s\n", jsonResp)
 	return Avalbytes, nil
 }
 
 func main() {
 	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
-		fmt.Printf("Error starting Simple chaincode: %s", err)
+		chaincodeLogger.Info("Error starting Simple chaincode: %s", err)
 	}
 }
