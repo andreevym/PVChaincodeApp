@@ -24,7 +24,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -188,6 +187,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 }
 
 func main() {
+	logger := shim.NewLogger("shim")
 	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
 		logger.Error("Error starting Simple chaincode: %s", err)
