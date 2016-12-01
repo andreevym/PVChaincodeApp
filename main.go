@@ -25,7 +25,6 @@ package main
 import (
 	"errors"
 	"strconv"
-	"github.com/op/go-logging"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
@@ -34,8 +33,7 @@ type SimpleChaincode struct {
 }
 
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	logger := logging.MustGetLogger("myapp")
-	logging.LogLevel("ERROR")
+	logger := shim.NewLogger("chaincode")
 	logger.Error("##### INIT RUN #####")
 	var A, B string    // Entities
 	var Aval, Bval int // Asset holdings
@@ -75,8 +73,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 // Transaction makes payment of X units from A to B
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	logger := logging.MustGetLogger("myapp")
-	logging.LogLevel("ERROR")
+	logger := shim.NewLogger("myapp")
 	logger.Error("##### INVOKE RUN #####")
 	if function == "delete" {
 		// Deletes an entity from its state
@@ -157,8 +154,7 @@ func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 
 // Query callback representing the query of a chaincode
 func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	logger := logging.MustGetLogger("myapp")
-	logging.LogLevel("ERROR")
+	logger := shim.NewLogger("myapp")
 	logger.Error("##### QUERY RUN #####")
 	if function != "query" {
 		return nil, errors.New("Invalid query function name. Expecting \"query\"")
@@ -190,8 +186,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 }
 
 func main() {
-	logger := logging.MustGetLogger("myapp")
-	logging.LogLevel("ERROR")
+	logger := shim.NewLogger("myapp")
 	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
 		logger.Error("Error starting Simple chaincode: %s", err)
