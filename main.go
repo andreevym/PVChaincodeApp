@@ -35,6 +35,8 @@ type SimpleChaincode struct {
 }
 
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	logger := shim.NewLogger("shim")
+	logger.Info("##### INIT RUN #####")
 	var A, B string    // Entities
 	var Aval, Bval int // Asset holdings
 	var err error
@@ -73,6 +75,8 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 
 // Transaction makes payment of X units from A to B
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	logger := shim.NewLogger("shim")
+	logger.Info("##### INVOKE RUN #####")
 	if function == "delete" {
 		// Deletes an entity from its state
 		return t.delete(stub, args)
@@ -152,6 +156,8 @@ func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string
 
 // Query callback representing the query of a chaincode
 func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	logger := shim.NewLogger("shim")
+	logger.Info("##### QUERY RUN #####")
 	if function != "query" {
 		return nil, errors.New("Invalid query function name. Expecting \"query\"")
 	}
