@@ -57,7 +57,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 		return nil, errors.New("Expecting integer value for asset holding")
 	}
 
-	fmt.Printf("Current values: A = %d, B = %d\n", Aval, Bval)
+	logger.Error("Current values: A = %d, B = %d\n", Aval, Bval)
 
 	// Write the state to the ledger
 	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
@@ -121,7 +121,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 	}
 	Aval = Aval - X
 	Bval = Bval + X
-	fmt.Printf("Current values: A = %d, B = %d\n", Aval, Bval)
+	logger.Error("Current values: A = %d, B = %d\n", Aval, Bval)
 
 	// Write the state back to the ledger
 	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
@@ -183,13 +183,13 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	}
 
 	jsonResp := "{\"Name\":\"" + A + "\",\"Amount\":\"" + string(Avalbytes) + "\"}"
-	fmt.Printf("Query Response:%s\n", jsonResp)
+	logger.Error("Query Response:%s\n", jsonResp)
 	return Avalbytes, nil
 }
 
 func main() {
 	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
-		fmt.Printf("Error starting Simple chaincode: %s", err)
+		logger.Error("Error starting Simple chaincode: %s", err)
 	}
 }
